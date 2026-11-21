@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>深圳10天亲子游 · 路线地图</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<style>
+  :root{
+    --bg:#ffffff; --bg2:#f6f7f9; --line:#e6e8ec; --text:#1d2430; --sub:#6b7480; --accent:#1d2430;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{display:flex;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+  /* Sidebar */
+  #side{width:360px;flex:0 0 360px;height:100%;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg)}
+  #head{padding:18px 20px 12px}
+  #head h1{margin:0;font-size:18px;font-weight:700;letter-spacing:.2px}
+  #head p{margin:4px 0 0;font-size:12.5px;color:var(--sub)}
+
+  #tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 20px 14px;scrollbar-width:none;border-bottom:1px solid var(--line)}
+  #tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;
+    padding:6px 12px;font-size:12.5px;cursor:pointer;text-align:center;line-height:1.25;font-family:inherit}
+  .tab small{display:block;font-size:10.5px;color:var(--sub);margin-top:1px}
+  .tab:hover{background:var(--bg2)}
+  .tab.on{background:var(--tc,var(--accent));border-color:var(--tc,var(--accent));color:#fff}
+  .tab.on small{color:rgba(255,255,255,.85)}
+
+  #list{flex:1;overflow-y:auto;padding:16px 20px 28px}
+  .dayhead{margin-bottom:14px}
+  .dayhead .d{font-size:12px;font-weight:600;color:var(--dc);text-transform:uppercase;letter-spacing:.6px}
+  .dayhead h2{margin:2px 0 0;font-size:17px;font-weight:700}
+
+  .stops{position:relative;margin:0;padding:0;list-style:none}
+  .stop{display:flex;gap:12px;padding:10px 10px;margin:0 -10px;border-radius:10px;cursor:pointer;position:relative}
+  .stop:hover{background:var(--bg2)}
+  .stop:not(:last-child)::before{content:"";position:absolute;left:25px;top:38px;bottom:-8px;width:2px;background:var(--line)}
+  .num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--dc);color:#fff;font-size:12.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+  .stop .t{font-size:14.5px;font-weight:600;line-height:1.35}
+  .stop .n{font-size:12.5px;color:var(--sub);margin-top:2px;line-height:1.45}
+
+  .daycard{display:flex;gap:12px;align-items:center;padding:12px;margin:0 -12px;border-radius:12px;cursor:pointer}
+  .daycard:hover{background:var(--bg2)}
+  .daycard .bar{flex:0 0 4px;align-self:stretch;border-radius:4px;background:var(--dc)}
+  .daycard .d{font-size:12px;color:var(--sub)}
+  .daycard .tt{font-size:14.5px;font-weight:600;margin-top:1px}
+  .daycard .c{font-size:12px;color:var(--sub);margin-top:2px}
+
+  #foot{padding:10px 20px;border-top:1px solid var(--line);font-size:11px;color:var(--sub);line-height:1.5;background:var(--bg2)}
+
+  /* Map */
+  #map{flex:1;height:100%;background:#eef0f3}
+  .pin{width:26px;height:26px;border-radius:50%;border:2.5px solid #fff;color:#fff;font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .pin.hotel{background:#1d2430;border-radius:8px;font-size:11px}
+  .leaflet-popup-content-wrapper{border-radius:12px}
+  .leaflet-popup-content{font-size:13px;line-height:1.5;margin:12px 14px}
+  .leaflet-popup-content b{font-size:14px}
+  .leaflet-popup-content .pd{color:var(--sub);font-size:11.5px}
+
+  /* Mobile */
+  @media (max-width:760px){
+    body{flex-direction:column}
+    #map{order:1;flex:0 0 46%;height:46%;width:100%}
+    #side{order:2;width:100%;flex:1 1 auto;height:54%;border-right:0;border-top:1px solid var(--line)}
+    #head{padding:12px 16px 8px}
+    #head h1{font-size:16px}
+    #tabs{padding:2px 16px 10px}
+    #list{padding:12px 16px 20px}
+    #foot{display:none}
+  }
+</style>
+</head>
+<body>
+<aside id="side">
+  <div id="head">
+    <h1>深圳10天亲子游</h1>
+    <p>12/26 – 1/4 · 住宿：东门君亭酒店</p>
+  </div>
+  <div id="tabs"></div>
+  <div id="list"></div>
+  <div id="foot">坐标为近似位置，导航请用高德 / 百度地图。</div>
+</aside>
+<div id="map"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+if(typeof L==="undefined"){
+  document.body.innerHTML='<div style="padding:24px;font-size:14px">地图库加载失败，请检查网络后刷新。<br>Map library failed to load. Check your connection and reload.</div>';
+  throw new Error("Leaflet not loaded");
+}
+
+const HOTEL = {n:"东门君亭酒店",lat:22.5460,lng:114.1170};
+
+const days = [
+ {id:1,date:"12/26",title:"抵达东门",color:"#e74c3c",places:[
+   {n:"深圳宝安国际机场 SZX",lat:22.6393,lng:113.8107,note:"20:25抵达"},
+   {n:"东门君亭酒店 / 东门老街",lat:22.5460,lng:114.1170,note:"入住、东门老街、东门麦当劳"}]},
+ {id:2,date:"12/27",title:"深圳湾 + 人才公园",color:"#e67e22",places:[
+   {n:"深圳湾公园",lat:22.5180,lng:113.9440,note:"花：紫花风铃木"},
+   {n:"深圳湾万象城·美野商店",lat:22.5170,lng:113.9470,note:"午餐"},
+   {n:"人才公园",lat:22.5150,lng:113.9445,note:"无人车，站点选“人才公园-东门”"},
+   {n:"头牌小厨·广东饭店（罗湖）",lat:22.5452,lng:114.1185,note:"晚餐"}]},
+ {id:3,date:"12/28",title:"欢乐海岸 + 梅拉尼娅",color:"#d4a017",places:[
+   {n:"欢乐海岸·海洋奇梦馆",lat:22.5234,lng:113.9879,note:"午餐在欢乐海岸"},
+   {n:"万象天地·蘑界",lat:22.5400,lng:113.9530,note:"早点晚餐"},
+   {n:"梅拉尼娅小镇",lat:22.5370,lng:113.9730,note:"晚餐后亮灯"}]},
+ {id:4,date:"12/29",title:"南头 + 前海",color:"#27ae60",places:[
+   {n:"南头古城",lat:22.5360,lng:113.9220,note:"上午，推车慢逛"},
+   {n:"万象前海",lat:22.5250,lng:113.8870,note:"冰雪之境 + 晚餐"},
+   {n:"前海石公园",lat:22.5280,lng:113.8840,note:"傍晚短停，不玩沙"}]},
+ {id:5,date:"12/30",title:"手信 + 科学馆 + 莲花山",color:"#16a085",places:[
+   {n:"同顺兴·深圳手信",lat:22.5460,lng:114.1170,note:"早上买手信"},
+   {n:"福田科学馆",lat:22.5440,lng:114.0570,note:"周一、二闭馆"},
+   {n:"莲花山公园·漾日湖",lat:22.5550,lng:114.0580,note:"花：落羽杉"},
+   {n:"客家汇·客家传承菜",lat:22.5480,lng:114.1200,note:"晚餐"}]},
+ {id:6,date:"12/31",title:"沙井 + 肥妹烧腊",color:"#8e44ad",places:[
+   {n:"沙井蚝乡湖公园",lat:22.7250,lng:113.8000,note:"金蚝节"},
+   {n:"蚝门饭店",lat:22.7300,lng:113.8100,note:"午餐"},
+   {n:"肥妹烧腊（翠竹总店）",lat:22.5560,lng:114.1280,note:"晚上店里吃"}]},
+ {id:7,date:"1/1",title:"COCO Park",color:"#2980b9",places:[
+   {n:"福田星河COCO Park",lat:22.5350,lng:114.0550,note:"午餐：很久以前羊肉串，10:30-11:00支付宝取号"}]},
+ {id:8,date:"1/2",title:"赏花 + 悠闲",color:"#d81b60",places:[
+   {n:"人民公园",lat:22.5490,lng:114.1120,note:"花：月季（备选洪湖落羽杉/荔枝梅花）"},
+   {n:"东门隐院（鸿展中心城4楼）",lat:22.5480,lng:114.1180,note:"晚餐，步行约8分钟"}]},
+ {id:9,date:"1/3",title:"蘩楼早茶",color:"#8d6e63",places:[
+   {n:"蘩楼（东门晒布店）",lat:22.5480,lng:114.1200,note:"08:00美团取号，08:30-10:30早茶"}]},
+ {id:10,date:"1/4",title:"返程",color:"#546e7a",places:[
+   {n:"深圳宝安国际机场 SZX",lat:22.6393,lng:113.8107,note:"10:40 CZ5031起飞"}]}
+];
+
+/* ---------- Map ---------- */
+const map = L.map('map',{zoomControl:false}).setView([22.56,113.98],11);
+L.control.zoom({position:'bottomright'}).addTo(map);
+
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'&copy; OpenStreetMap'
+}).addTo(map);
+const amap = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',{
+  subdomains:'1234', maxZoom:18, attribution:'&copy; 高德地图'
+});
+let swapped=false;
+osm.on('tileerror',()=>{ if(!swapped){ swapped=true; map.removeLayer(osm); amap.addTo(map); } });
+L.control.layers({'OpenStreetMap':osm,'高德地图':amap},null,{position:'topright'}).addTo(map);
+
+const hotelIcon = L.divIcon({
+  className:'', iconSize:[28,28], iconAnchor:[14,14], popupAnchor:[0,-14],
+  html:'<div class="pin hotel">H</div>'
+});
+L.marker([HOTEL.lat,HOTEL.lng],{icon:hotelIcon,zIndexOffset:-100}).addTo(map)
+  .bindPopup(`<b>住宿</b><br>${HOTEL.n}`);
+
+const layers = {};   // id -> layerGroup
+const markers = {};  // id -> [marker]
+const allPts = [[HOTEL.lat,HOTEL.lng]];
+
+days.forEach(d=>{
+  const group = L.layerGroup();
+  markers[d.id] = [];
+  d.places.forEach((p,i)=>{
+    const icon = L.divIcon({
+      className:'', iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-13],
+      html:`<div class="pin" style="background:${d.color}">${i+1}</div>`
+    });
+    const m = L.marker([p.lat,p.lng],{icon}).addTo(group)
+      .bindPopup(`<b>${p.n}</b><br><span class="pd">Day ${d.id} · ${d.date}</span><br>${p.note||''}`);
+    markers[d.id].push(m);
+    allPts.push([p.lat,p.lng]);
+  });
+  if(d.places.length>1){
+    L.polyline(d.places.map(p=>[p.lat,p.lng]),{color:d.color,weight:3,opacity:.8,dashArray:'2 7',lineCap:'round'}).addTo(group);
+  }
+  layers[d.id] = group;
+});
+
+/* ---------- UI ---------- */
+const tabsEl = document.getElementById('tabs');
+const listEl = document.getElementById('list');
+let current = 'all';
+
+function fitDay(id){
+  if(id==='all'){ map.fitBounds(L.latLngBounds(allPts).pad(0.12)); return; }
+  const d = days.find(x=>x.id===id);
+  const pts = d.places.map(p=>[p.lat,p.lng]);
+  if(pts.length===1){ map.setView(pts[0],15); }
+  else { map.fitBounds(L.latLngBounds(pts).pad(0.25),{maxZoom:15}); }
+}
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  const mk=(id,l1,l2,color)=>{
+    const b=document.createElement('button');
+    b.className='tab'+(current===id?' on':'');
+    if(color) b.style.setProperty('--tc',color);
+    b.innerHTML=`${l1}<small>${l2}</small>`;
+    b.onclick=()=>select(id);
+    tabsEl.appendChild(b);
+    return b;
+  };
+  mk('all','全部','10天');
+  days.forEach(d=>mk(d.id,`Day ${d.id}`,d.date,d.color));
+  const on=tabsEl.querySelector('.on');
+  if(on) on.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+}
+
+function renderList(){
+  if(current==='all'){
+    listEl.innerHTML = days.map(d=>`
+      <div class="daycard" style="--dc:${d.color}" data-id="${d.id}">
+        <div class="bar"></div>
+        <div>
+          <div class="d">Day ${d.id} · ${d.date}</div>
+          <div class="tt">${d.title}</div>
+          <div class="c">${d.places.length} 个地点</div>
+        </div>
+      </div>`).join('');
+    listEl.querySelectorAll('.daycard').forEach(el=>{
+      el.onclick=()=>select(Number(el.dataset.id));
+    });
+  } else {
+    const d = days.find(x=>x.id===current);
+    listEl.innerHTML = `
+      <div class="dayhead" style="--dc:${d.color}">
+        <div class="d">Day ${d.id} · ${d.date}</div>
+        <h2>${d.title}</h2>
+      </div>
+      <ol class="stops" style="--dc:${d.color}">
+        ${d.places.map((p,i)=>`
+          <li class="stop" data-i="${i}">
+            <div class="num">${i+1}</div>
+            <div>
+              <div class="t">${p.n}</div>
+              ${p.note?`<div class="n">${p.note}</div>`:''}
+            </div>
+          </li>`).join('')}
+      </ol>`;
+    listEl.querySelectorAll('.stop').forEach(el=>{
+      el.onclick=()=>{
+        const i=Number(el.dataset.i), p=d.places[i];
+        map.flyTo([p.lat,p.lng],Math.max(map.getZoom(),15),{duration:.6});
+        setTimeout(()=>markers[d.id][i].openPopup(),650);
+      };
+    });
+  }
+  listEl.scrollTop=0;
+}
+
+function select(id){
+  current=id;
+  Object.entries(layers).forEach(([k,l])=>{
+    const show = id==='all' || Number(k)===id;
+    show ? l.addTo(map) : map.removeLayer(l);
+  });
+  renderTabs(); renderList(); fitDay(id);
+}
+
+select('all');
+</script>
+</body>
+</html>
