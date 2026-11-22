@@ -405,12 +405,12 @@ const withCity=k=>k.includes('深圳')?k:'深圳 '+k;
 const isAndroid=()=>/Android/i.test(navigator.userAgent);
 function openDp(kw,ev){
   kw=withCity(kw);
-  copyKw(kw,ev,'大众点评',`已复制「${kw}」。点评按城市搜索：请先把城市切换为「深圳」（历史访问里有），再粘贴搜索`);
+  copyKw(kw,ev,'大众点评');
   const enc=encodeURIComponent(kw);
   setTimeout(()=>{
     location.href = isAndroid()
-      ? `intent://searchshoplist?keyword=${enc}&cityid=7#Intent;scheme=dianping;package=com.dianping.v1;end`
-      : `dianping://searchshoplist?keyword=${enc}&cityid=7`;
+      ? `intent://searchshoplist?keyword=${enc}#Intent;scheme=dianping;package=com.dianping.v1;end`
+      : `dianping://searchshoplist?keyword=${enc}`;
   },500);
 }
 function openAmap(kw,ev){
