@@ -401,8 +401,10 @@ function copyKw(kw,ev,app){
   };
   if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(kw).then(done,fallback); } else fallback();
 }
+const withCity=k=>k.includes('深圳')?k:k+' 深圳';
 const isAndroid=()=>/Android/i.test(navigator.userAgent);
 function openDp(kw,ev){
+  kw=withCity(kw);
   copyKw(kw,ev,'大众点评');
   const enc=encodeURIComponent(kw);
   setTimeout(()=>{
@@ -412,6 +414,7 @@ function openDp(kw,ev){
   },500);
 }
 function openAmap(kw,ev){
+  kw=withCity(kw);
   if(ev) ev.stopPropagation();
   const enc=encodeURIComponent(kw);
   if(isAndroid()){
@@ -422,7 +425,7 @@ function openAmap(kw,ev){
   }
 }
 function openXhs(kw,ev){
-  const q=kw.includes('深圳')?kw:kw+' 深圳';
+  const q=withCity(kw);
   copyKw(q,ev,'小红书');
   const enc=encodeURIComponent(q);
   setTimeout(()=>{
