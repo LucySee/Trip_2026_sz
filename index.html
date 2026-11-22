@@ -386,13 +386,13 @@ const LINKS = {
 const HOTEL_LINK = {"t": "东门君亭酒店", "c": "住宿", "a": "罗湖东门", "k": "东门君亭酒店"};
 
 const amapUrl=kw=>`https://uri.amap.com/search?keyword=${encodeURIComponent(kw)}&city=${encodeURIComponent('深圳')}&callnative=1`;
-const xhsUrl=kw=>`https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(kw.includes('深圳')?kw:kw+' 深圳')}&source=web_search_result_notes`;
 const toastEl=document.getElementById('toast');
 let toastT;
 function showToast(msg){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'),3200); }
-function copyKw(kw,ev){
+function copyKw(kw,ev,app){
+  app=app||'大众点评';
   if(ev) ev.stopPropagation();
-  const done=()=>showToast(`已复制「${kw}」，请打开大众点评粘贴搜索`);
+  const done=()=>showToast(`已复制「${kw}」，请打开${app}粘贴搜索`);
   const fallback=()=>{
     const ta=document.createElement('textarea'); ta.value=kw; ta.style.position='fixed'; ta.style.opacity='0';
     document.body.appendChild(ta); ta.select();
@@ -401,10 +401,22 @@ function copyKw(kw,ev){
   };
   if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(kw).then(done,fallback); } else fallback();
 }
+function openXhs(kw,ev){
+  const q=kw.includes('深圳')?kw:kw+' 深圳';
+  copyKw(q,ev,'小红书');
+  const enc=encodeURIComponent(q);
+  setTimeout(()=>{
+    if(/Android/i.test(navigator.userAgent)){
+      location.href=`intent://search/result?keyword=${enc}#Intent;scheme=xhsdiscover;package=com.xingin.xhs;end`;
+    } else {
+      location.href=`xhsdiscover://search/result?keyword=${enc}`;
+    }
+  },500);
+}
 const linkChips=arr=>!arr||!arr.length?'':
   '<div class="links">'+arr.map(l=>`<div class="lrow"><div class="ln">${l.t}<span class="la">${l.a}</span></div>`+
   `<button type="button" class="lk" data-k="${l.k}" onclick="copyKw(this.dataset.k,event)">复制点评关键词</button>`+
-  `<a class="lk" href="${xhsUrl(l.k)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">小红书 ↗</a>`+
+  `<button type="button" class="lk" data-k="${l.k}" onclick="openXhs(this.dataset.k,event)">小红书 ↗</button>`+
   `<a class="lk" href="${amapUrl(l.k)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">高德地图 ↗</a></div>`).join('')+'</div>';
 
 /* ---------- Map ---------- */
