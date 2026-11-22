@@ -401,6 +401,26 @@ function copyKw(kw,ev,app){
   };
   if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(kw).then(done,fallback); } else fallback();
 }
+const isAndroid=()=>/Android/i.test(navigator.userAgent);
+function openDp(kw,ev){
+  copyKw(kw,ev,'大众点评');
+  const enc=encodeURIComponent(kw);
+  setTimeout(()=>{
+    location.href = isAndroid()
+      ? `intent://searchshoplist?keyword=${enc}#Intent;scheme=dianping;package=com.dianping.v1;end`
+      : `dianping://searchshoplist?keyword=${enc}`;
+  },500);
+}
+function openAmap(kw,ev){
+  if(ev) ev.stopPropagation();
+  const enc=encodeURIComponent(kw);
+  if(isAndroid()){
+    location.href=`intent://poi?sourceApplication=szTrip&keywords=${enc}&dev=0#Intent;scheme=androidamap;package=com.autonavi.minimap;S.browser_fallback_url=${encodeURIComponent(amapUrl(kw))};end`;
+  } else {
+    location.href=`iosamap://poi?sourceApplication=szTrip&name=${enc}&dev=0`;
+    setTimeout(()=>{ if(!document.hidden) window.open(amapUrl(kw),'_blank'); },1200);
+  }
+}
 function openXhs(kw,ev){
   const q=kw.includes('深圳')?kw:kw+' 深圳';
   copyKw(q,ev,'小红书');
@@ -415,9 +435,9 @@ function openXhs(kw,ev){
 }
 const linkChips=arr=>!arr||!arr.length?'':
   '<div class="links">'+arr.map(l=>`<div class="lrow"><div class="ln">${l.t}<span class="la">${l.a}</span></div>`+
-  `<button type="button" class="lk" data-k="${l.k}" onclick="copyKw(this.dataset.k,event)">复制点评关键词</button>`+
+  `<button type="button" class="lk" data-k="${l.k}" onclick="openDp(this.dataset.k,event)">大众点评 ↗</button>`+
   `<button type="button" class="lk" data-k="${l.k}" onclick="openXhs(this.dataset.k,event)">小红书 ↗</button>`+
-  `<a class="lk" href="${amapUrl(l.k)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">高德地图 ↗</a></div>`).join('')+'</div>';
+  `<button type="button" class="lk" data-k="${l.k}" onclick="openAmap(this.dataset.k,event)">高德地图 ↗</button></div>`).join('')+'</div>';
 
 /* ---------- Map ---------- */
 const map = L.map('map',{zoomControl:false}).setView([22.56,113.98],11);
