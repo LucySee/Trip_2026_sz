@@ -52,6 +52,14 @@
 
   #foot{padding:10px 20px;border-top:1px solid var(--line);font-size:11px;color:var(--sub);line-height:1.5;background:var(--bg2)}
 
+  .stop .body{flex:1;min-width:0}
+
+  .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+  .lk,.leaflet-container a.lk{display:inline-block;font-size:11.5px;line-height:1.3;padding:3px 9px;border:1px solid var(--line);border-radius:999px;
+    color:var(--text);text-decoration:none;background:var(--bg)}
+  .lk:hover{background:var(--bg2)}
+  .lk i{font-style:normal;color:var(--sub);margin-left:3px}
+
   /* Map */
   #map{flex:1;height:100%;background:#eef0f3}
   .pin{width:26px;height:26px;border-radius:50%;border:2.5px solid #fff;color:#fff;font-size:12px;font-weight:700;
@@ -133,6 +141,247 @@ const days = [
    {n:"深圳宝安国际机场 SZX",lat:22.6393,lng:113.8107,note:"10:40 CZ5031起飞"}]}
 ];
 
+const LINKS = {
+ "1-1": [
+  {
+   "t": "深圳宝安国际机场",
+   "c": "地点",
+   "a": "宝安",
+   "u": "https://www.dianping.com/search/keyword/7/0_深圳宝安国际机场"
+  }
+ ],
+ "1-2": [
+  {
+   "t": "东门君亭酒店",
+   "c": "住宿",
+   "a": "罗湖东门",
+   "u": "https://www.dianping.com/search/keyword/7/0_东门君亭酒店"
+  },
+  {
+   "t": "东门老街",
+   "c": "地点",
+   "a": "罗湖",
+   "u": "https://www.dianping.com/search/keyword/7/0_东门老街"
+  },
+  {
+   "t": "东门麦当劳",
+   "c": "餐厅",
+   "a": "罗湖东门",
+   "u": "https://www.dianping.com/search/keyword/7/0_东门麦当劳"
+  }
+ ],
+ "2-1": [
+  {
+   "t": "深圳湾公园",
+   "c": "地点",
+   "a": "南山",
+   "u": "https://www.dianping.com/search/keyword/7/0_深圳湾公园"
+  }
+ ],
+ "2-2": [
+  {
+   "t": "美野商店",
+   "c": "餐厅",
+   "a": "深圳湾万象城",
+   "u": "https://www.dianping.com/search/keyword/7/0_美野商店"
+  }
+ ],
+ "2-3": [
+  {
+   "t": "人才公园",
+   "c": "地点",
+   "a": "南山",
+   "u": "https://www.dianping.com/search/keyword/7/0_人才公园"
+  }
+ ],
+ "2-4": [
+  {
+   "t": "头牌小厨·广东饭店",
+   "c": "餐厅",
+   "a": "罗湖店",
+   "u": "https://www.dianping.com/search/keyword/7/0_头牌小厨广东饭店罗湖"
+  }
+ ],
+ "3-1": [
+  {
+   "t": "欢乐海岸",
+   "c": "地点",
+   "a": "南山",
+   "u": "https://www.dianping.com/search/keyword/7/0_欢乐海岸"
+  },
+  {
+   "t": "海洋奇梦馆",
+   "c": "地点",
+   "a": "欢乐海岸",
+   "u": "https://www.dianping.com/search/keyword/7/0_海洋奇梦馆"
+  }
+ ],
+ "3-2": [
+  {
+   "t": "蘑界·野生菌石锅鸡",
+   "c": "餐厅",
+   "a": "万象天地",
+   "u": "https://www.dianping.com/search/keyword/7/0_蘑界万象天地"
+  }
+ ],
+ "3-3": [
+  {
+   "t": "梅拉尼娅小镇",
+   "c": "地点",
+   "a": "南山",
+   "u": "https://www.dianping.com/search/keyword/7/0_梅拉尼娅小镇"
+  }
+ ],
+ "4-1": [
+  {
+   "t": "南头古城",
+   "c": "地点",
+   "a": "南山",
+   "u": "https://www.dianping.com/search/keyword/7/0_南头古城"
+  }
+ ],
+ "4-2": [
+  {
+   "t": "万象前海",
+   "c": "地点",
+   "a": "南山前海",
+   "u": "https://www.dianping.com/search/keyword/7/0_万象前海"
+  }
+ ],
+ "4-3": [
+  {
+   "t": "前海石公园",
+   "c": "地点",
+   "a": "南山前海",
+   "u": "https://www.dianping.com/search/keyword/7/0_前海石公园"
+  }
+ ],
+ "5-1": [
+  {
+   "t": "同顺兴·深圳手信",
+   "c": "手信",
+   "a": "罗湖东门",
+   "u": "https://www.dianping.com/search/keyword/7/0_同顺兴深圳手信"
+  }
+ ],
+ "5-2": [
+  {
+   "t": "福田科学馆",
+   "c": "地点",
+   "a": "福田",
+   "u": "https://www.dianping.com/search/keyword/7/0_福田科学馆"
+  },
+  {
+   "t": "奥彼文星球食研",
+   "c": "餐厅",
+   "a": "科学馆内",
+   "u": "https://www.dianping.com/search/keyword/7/0_奥彼文星球食研"
+  }
+ ],
+ "5-3": [
+  {
+   "t": "莲花山公园·漾日湖",
+   "c": "地点",
+   "a": "福田",
+   "u": "https://www.dianping.com/search/keyword/7/0_莲花山公园漾日湖"
+  }
+ ],
+ "5-4": [
+  {
+   "t": "客家汇·客家传承菜",
+   "c": "餐厅",
+   "a": "罗湖",
+   "u": "https://www.dianping.com/search/keyword/7/0_客家汇客家传承菜"
+  }
+ ],
+ "6-1": [
+  {
+   "t": "沙井蚝乡湖公园",
+   "c": "地点",
+   "a": "宝安沙井",
+   "u": "https://www.dianping.com/search/keyword/7/0_沙井蚝乡湖公园"
+  }
+ ],
+ "6-2": [
+  {
+   "t": "蚝门饭店",
+   "c": "餐厅",
+   "a": "沙井",
+   "u": "https://www.dianping.com/search/keyword/7/0_蚝门饭店沙井"
+  }
+ ],
+ "6-3": [
+  {
+   "t": "肥妹烧腊店",
+   "c": "餐厅",
+   "a": "翠竹总店",
+   "u": "https://www.dianping.com/search/keyword/7/0_肥妹烧腊翠竹总店"
+  }
+ ],
+ "7-1": [
+  {
+   "t": "福田星河COCO Park",
+   "c": "地点",
+   "a": "福田",
+   "u": "https://www.dianping.com/search/keyword/7/0_福田星河COCOPark"
+  },
+  {
+   "t": "很久以前羊肉串",
+   "c": "餐厅",
+   "a": "COCO Park店",
+   "u": "https://www.dianping.com/search/keyword/7/0_很久以前羊肉串COCOPark"
+  }
+ ],
+ "8-1": [
+  {
+   "t": "人民公园",
+   "c": "地点",
+   "a": "罗湖",
+   "u": "https://www.dianping.com/search/keyword/7/0_人民公园深圳"
+  },
+  {
+   "t": "洪湖公园",
+   "c": "地点",
+   "a": "罗湖",
+   "u": "https://www.dianping.com/search/keyword/7/0_洪湖公园"
+  },
+  {
+   "t": "荔枝公园",
+   "c": "地点",
+   "a": "福田",
+   "u": "https://www.dianping.com/search/keyword/7/0_荔枝公园"
+  }
+ ],
+ "8-2": [
+  {
+   "t": "东门隐院",
+   "c": "餐厅",
+   "a": "鸿展中心城4楼",
+   "u": "https://www.dianping.com/search/keyword/7/0_东门隐院鸿展中心城"
+  }
+ ],
+ "9-1": [
+  {
+   "t": "蘩楼",
+   "c": "餐厅",
+   "a": "东门晒布店",
+   "u": "https://www.dianping.com/search/keyword/7/0_蘩楼东门晒布店"
+  }
+ ],
+ "10-1": [
+  {
+   "t": "深圳宝安国际机场",
+   "c": "地点",
+   "a": "宝安",
+   "u": "https://www.dianping.com/search/keyword/7/0_深圳宝安国际机场"
+  }
+ ]
+};
+const HOTEL_LINK = {"t": "东门君亭酒店", "c": "住宿", "a": "罗湖东门", "u": "https://www.dianping.com/search/keyword/7/0_东门君亭酒店"};
+
+const linkChips=(arr)=>!arr||!arr.length?'':
+  '<div class="links">'+arr.map(l=>`<a class="lk" href="${encodeURI(l.u)}" target="_blank" rel="noopener" title="${l.c} · ${l.a} · 大众点评" onclick="event.stopPropagation()">${l.t}<i>↗</i></a>`).join('')+'</div>';
+
 /* ---------- Map ---------- */
 const map = L.map('map',{zoomControl:false}).setView([22.56,113.98],11);
 L.control.zoom({position:'bottomright'}).addTo(map);
@@ -152,7 +401,7 @@ const hotelIcon = L.divIcon({
   html:'<div class="pin hotel">H</div>'
 });
 L.marker([HOTEL.lat,HOTEL.lng],{icon:hotelIcon,zIndexOffset:-100}).addTo(map)
-  .bindPopup(`<b>住宿</b><br>${HOTEL.n}`);
+  .bindPopup(`<b>住宿</b><br>${HOTEL.n}${linkChips([HOTEL_LINK])}`);
 
 const layers = {};   // id -> layerGroup
 const markers = {};  // id -> [marker]
@@ -167,7 +416,7 @@ days.forEach(d=>{
       html:`<div class="pin" style="background:${d.color}">${i+1}</div>`
     });
     const m = L.marker([p.lat,p.lng],{icon}).addTo(group)
-      .bindPopup(`<b>${p.n}</b><br><span class="pd">Day ${d.id} · ${d.date}</span><br>${p.note||''}`);
+      .bindPopup(`<b>${p.n}</b><br><span class="pd">Day ${d.id} · ${d.date}</span><br>${p.note||''}${linkChips(LINKS[d.id+'-'+(i+1)])}`);
     markers[d.id].push(m);
     allPts.push([p.lat,p.lng]);
   });
@@ -232,9 +481,10 @@ function renderList(){
         ${d.places.map((p,i)=>`
           <li class="stop" data-i="${i}">
             <div class="num">${i+1}</div>
-            <div>
+            <div class="body">
               <div class="t">${p.n}</div>
               ${p.note?`<div class="n">${p.note}</div>`:''}
+              ${linkChips(LINKS[d.id+'-'+(i+1)])}
             </div>
           </li>`).join('')}
       </ol>`;
