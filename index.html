@@ -54,11 +54,16 @@
 
   .stop .body{flex:1;min-width:0}
 
-  .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-  .lk,.leaflet-container a.lk{display:inline-block;font-size:11.5px;line-height:1.3;padding:3px 9px;border:1px solid var(--line);border-radius:999px;
-    color:var(--text);text-decoration:none;background:var(--bg)}
+  .links{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .lrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .lrow .ln{flex:0 0 100%;font-size:12px;font-weight:600}
+  .lrow .la{font-weight:400;color:var(--sub);margin-left:6px}
+  .lk,.leaflet-container a.lk{display:inline-block;font:inherit;font-size:11.5px;line-height:1.3;padding:4px 10px;border:1px solid var(--line);
+    border-radius:999px;color:var(--text);text-decoration:none;background:var(--bg);cursor:pointer}
   .lk:hover{background:var(--bg2)}
-  .lk i{font-style:normal;color:var(--sub);margin-left:3px}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:rgba(29,36,48,.94);color:#fff;
+    padding:10px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:6000;max-width:90%;text-align:center}
+  #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* Map */
   #map{flex:1;height:100%;background:#eef0f3}
@@ -94,6 +99,7 @@
   <div id="foot">坐标为近似位置，导航请用高德 / 百度地图。</div>
 </aside>
 <div id="map"></div>
+<div id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
@@ -147,7 +153,7 @@ const LINKS = {
    "t": "深圳宝安国际机场",
    "c": "地点",
    "a": "宝安",
-   "u": "https://www.dianping.com/search/keyword/7/0_深圳宝安国际机场"
+   "k": "深圳宝安国际机场"
   }
  ],
  "1-2": [
@@ -155,19 +161,19 @@ const LINKS = {
    "t": "东门君亭酒店",
    "c": "住宿",
    "a": "罗湖东门",
-   "u": "https://www.dianping.com/search/keyword/7/0_东门君亭酒店"
+   "k": "东门君亭酒店"
   },
   {
    "t": "东门老街",
    "c": "地点",
    "a": "罗湖",
-   "u": "https://www.dianping.com/search/keyword/7/0_东门老街"
+   "k": "东门老街"
   },
   {
    "t": "东门麦当劳",
    "c": "餐厅",
    "a": "罗湖东门",
-   "u": "https://www.dianping.com/search/keyword/7/0_东门麦当劳"
+   "k": "东门麦当劳"
   }
  ],
  "2-1": [
@@ -175,7 +181,7 @@ const LINKS = {
    "t": "深圳湾公园",
    "c": "地点",
    "a": "南山",
-   "u": "https://www.dianping.com/search/keyword/7/0_深圳湾公园"
+   "k": "深圳湾公园"
   }
  ],
  "2-2": [
@@ -183,7 +189,7 @@ const LINKS = {
    "t": "美野商店",
    "c": "餐厅",
    "a": "深圳湾万象城",
-   "u": "https://www.dianping.com/search/keyword/7/0_美野商店"
+   "k": "美野商店"
   }
  ],
  "2-3": [
@@ -191,7 +197,7 @@ const LINKS = {
    "t": "人才公园",
    "c": "地点",
    "a": "南山",
-   "u": "https://www.dianping.com/search/keyword/7/0_人才公园"
+   "k": "人才公园"
   }
  ],
  "2-4": [
@@ -199,7 +205,7 @@ const LINKS = {
    "t": "头牌小厨·广东饭店",
    "c": "餐厅",
    "a": "罗湖店",
-   "u": "https://www.dianping.com/search/keyword/7/0_头牌小厨广东饭店罗湖"
+   "k": "头牌小厨 罗湖"
   }
  ],
  "3-1": [
@@ -207,13 +213,13 @@ const LINKS = {
    "t": "欢乐海岸",
    "c": "地点",
    "a": "南山",
-   "u": "https://www.dianping.com/search/keyword/7/0_欢乐海岸"
+   "k": "欢乐海岸"
   },
   {
    "t": "海洋奇梦馆",
    "c": "地点",
    "a": "欢乐海岸",
-   "u": "https://www.dianping.com/search/keyword/7/0_海洋奇梦馆"
+   "k": "海洋奇梦馆"
   }
  ],
  "3-2": [
@@ -221,7 +227,7 @@ const LINKS = {
    "t": "蘑界·野生菌石锅鸡",
    "c": "餐厅",
    "a": "万象天地",
-   "u": "https://www.dianping.com/search/keyword/7/0_蘑界万象天地"
+   "k": "蘑界 万象天地"
   }
  ],
  "3-3": [
@@ -229,7 +235,7 @@ const LINKS = {
    "t": "梅拉尼娅小镇",
    "c": "地点",
    "a": "南山",
-   "u": "https://www.dianping.com/search/keyword/7/0_梅拉尼娅小镇"
+   "k": "梅拉尼娅小镇"
   }
  ],
  "4-1": [
@@ -237,7 +243,7 @@ const LINKS = {
    "t": "南头古城",
    "c": "地点",
    "a": "南山",
-   "u": "https://www.dianping.com/search/keyword/7/0_南头古城"
+   "k": "南头古城"
   }
  ],
  "4-2": [
@@ -245,7 +251,7 @@ const LINKS = {
    "t": "万象前海",
    "c": "地点",
    "a": "南山前海",
-   "u": "https://www.dianping.com/search/keyword/7/0_万象前海"
+   "k": "万象前海"
   }
  ],
  "4-3": [
@@ -253,7 +259,7 @@ const LINKS = {
    "t": "前海石公园",
    "c": "地点",
    "a": "南山前海",
-   "u": "https://www.dianping.com/search/keyword/7/0_前海石公园"
+   "k": "前海石公园"
   }
  ],
  "5-1": [
@@ -261,7 +267,7 @@ const LINKS = {
    "t": "同顺兴·深圳手信",
    "c": "手信",
    "a": "罗湖东门",
-   "u": "https://www.dianping.com/search/keyword/7/0_同顺兴深圳手信"
+   "k": "同顺兴 深圳手信"
   }
  ],
  "5-2": [
@@ -269,13 +275,13 @@ const LINKS = {
    "t": "福田科学馆",
    "c": "地点",
    "a": "福田",
-   "u": "https://www.dianping.com/search/keyword/7/0_福田科学馆"
+   "k": "福田科学馆"
   },
   {
    "t": "奥彼文星球食研",
    "c": "餐厅",
    "a": "科学馆内",
-   "u": "https://www.dianping.com/search/keyword/7/0_奥彼文星球食研"
+   "k": "奥彼文星球食研"
   }
  ],
  "5-3": [
@@ -283,7 +289,7 @@ const LINKS = {
    "t": "莲花山公园·漾日湖",
    "c": "地点",
    "a": "福田",
-   "u": "https://www.dianping.com/search/keyword/7/0_莲花山公园漾日湖"
+   "k": "莲花山公园 漾日湖"
   }
  ],
  "5-4": [
@@ -291,7 +297,7 @@ const LINKS = {
    "t": "客家汇·客家传承菜",
    "c": "餐厅",
    "a": "罗湖",
-   "u": "https://www.dianping.com/search/keyword/7/0_客家汇客家传承菜"
+   "k": "客家汇 客家传承菜"
   }
  ],
  "6-1": [
@@ -299,7 +305,7 @@ const LINKS = {
    "t": "沙井蚝乡湖公园",
    "c": "地点",
    "a": "宝安沙井",
-   "u": "https://www.dianping.com/search/keyword/7/0_沙井蚝乡湖公园"
+   "k": "沙井蚝乡湖公园"
   }
  ],
  "6-2": [
@@ -307,7 +313,7 @@ const LINKS = {
    "t": "蚝门饭店",
    "c": "餐厅",
    "a": "沙井",
-   "u": "https://www.dianping.com/search/keyword/7/0_蚝门饭店沙井"
+   "k": "蚝门饭店"
   }
  ],
  "6-3": [
@@ -315,7 +321,7 @@ const LINKS = {
    "t": "肥妹烧腊店",
    "c": "餐厅",
    "a": "翠竹总店",
-   "u": "https://www.dianping.com/search/keyword/7/0_肥妹烧腊翠竹总店"
+   "k": "肥妹烧腊 翠竹"
   }
  ],
  "7-1": [
@@ -323,13 +329,13 @@ const LINKS = {
    "t": "福田星河COCO Park",
    "c": "地点",
    "a": "福田",
-   "u": "https://www.dianping.com/search/keyword/7/0_福田星河COCOPark"
+   "k": "福田星河COCO Park"
   },
   {
    "t": "很久以前羊肉串",
    "c": "餐厅",
    "a": "COCO Park店",
-   "u": "https://www.dianping.com/search/keyword/7/0_很久以前羊肉串COCOPark"
+   "k": "很久以前羊肉串 COCO Park"
   }
  ],
  "8-1": [
@@ -337,19 +343,19 @@ const LINKS = {
    "t": "人民公园",
    "c": "地点",
    "a": "罗湖",
-   "u": "https://www.dianping.com/search/keyword/7/0_人民公园深圳"
+   "k": "人民公园 深圳"
   },
   {
    "t": "洪湖公园",
    "c": "地点",
    "a": "罗湖",
-   "u": "https://www.dianping.com/search/keyword/7/0_洪湖公园"
+   "k": "洪湖公园"
   },
   {
    "t": "荔枝公园",
    "c": "地点",
    "a": "福田",
-   "u": "https://www.dianping.com/search/keyword/7/0_荔枝公园"
+   "k": "荔枝公园"
   }
  ],
  "8-2": [
@@ -357,7 +363,7 @@ const LINKS = {
    "t": "东门隐院",
    "c": "餐厅",
    "a": "鸿展中心城4楼",
-   "u": "https://www.dianping.com/search/keyword/7/0_东门隐院鸿展中心城"
+   "k": "东门隐院"
   }
  ],
  "9-1": [
@@ -365,7 +371,7 @@ const LINKS = {
    "t": "蘩楼",
    "c": "餐厅",
    "a": "东门晒布店",
-   "u": "https://www.dianping.com/search/keyword/7/0_蘩楼东门晒布店"
+   "k": "蘩楼 东门晒布"
   }
  ],
  "10-1": [
@@ -373,14 +379,33 @@ const LINKS = {
    "t": "深圳宝安国际机场",
    "c": "地点",
    "a": "宝安",
-   "u": "https://www.dianping.com/search/keyword/7/0_深圳宝安国际机场"
+   "k": "深圳宝安国际机场"
   }
  ]
 };
-const HOTEL_LINK = {"t": "东门君亭酒店", "c": "住宿", "a": "罗湖东门", "u": "https://www.dianping.com/search/keyword/7/0_东门君亭酒店"};
+const HOTEL_LINK = {"t": "东门君亭酒店", "c": "住宿", "a": "罗湖东门", "k": "东门君亭酒店"};
 
-const linkChips=(arr)=>!arr||!arr.length?'':
-  '<div class="links">'+arr.map(l=>`<a class="lk" href="${encodeURI(l.u)}" target="_blank" rel="noopener" title="${l.c} · ${l.a} · 大众点评" onclick="event.stopPropagation()">${l.t}<i>↗</i></a>`).join('')+'</div>';
+const amapUrl=kw=>`https://uri.amap.com/search?keyword=${encodeURIComponent(kw)}&city=${encodeURIComponent('深圳')}&callnative=1`;
+const xhsUrl=kw=>`https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(kw.includes('深圳')?kw:kw+' 深圳')}&source=web_search_result_notes`;
+const toastEl=document.getElementById('toast');
+let toastT;
+function showToast(msg){ toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'),3200); }
+function copyKw(kw,ev){
+  if(ev) ev.stopPropagation();
+  const done=()=>showToast(`已复制「${kw}」，请打开大众点评粘贴搜索`);
+  const fallback=()=>{
+    const ta=document.createElement('textarea'); ta.value=kw; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ showToast('搜索词：'+kw); }
+    ta.remove();
+  };
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(kw).then(done,fallback); } else fallback();
+}
+const linkChips=arr=>!arr||!arr.length?'':
+  '<div class="links">'+arr.map(l=>`<div class="lrow"><div class="ln">${l.t}<span class="la">${l.a}</span></div>`+
+  `<button type="button" class="lk" data-k="${l.k}" onclick="copyKw(this.dataset.k,event)">复制点评关键词</button>`+
+  `<a class="lk" href="${xhsUrl(l.k)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">小红书 ↗</a>`+
+  `<a class="lk" href="${amapUrl(l.k)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">高德地图 ↗</a></div>`).join('')+'</div>';
 
 /* ---------- Map ---------- */
 const map = L.map('map',{zoomControl:false}).setView([22.56,113.98],11);
